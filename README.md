@@ -1,7 +1,7 @@
-# ParaRun -- Computational Experiment at Scale
+# HC Phase Transition Analysis 
 
 ## About
-- ParaRun is a simple template for running massive computational experiments 
+Explore the asymptotic performance of HC and other tests over multiple configurations
 
 ## Usage
  - install ``requirements.txt``
@@ -13,6 +13,9 @@
  - install 'dask' and 'dask-distributed'
  - use ``--dask`` when running the file containing ``main()``
 
+## Usage
+ - Setup parameters in ``params.yaml''
+ - Run main file (e.g.): ``python para_run.py --dask''
 
 
 

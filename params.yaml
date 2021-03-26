@@ -1,16 +1,25 @@
-nMonte : 10
+nMonte: 10
 
-seed : 42
-
-variables: 
-  x :
-    min: 1
-    max: 15
-    length: 15
-    type: int
-  y :
+variables:
+  r: 
     min: 0
+    max: 2
+    length: 15
+
+  beta:
+    min: .45
     max: 1
-    length: 100
-    type: float
+    length: 13
+
+  n_features: 
+    - 10000
+
+  n_samples:
+    - 5000
+    - 10000
+    - 50000
+
+  Zipf_params:
+    - .0
+    - .5
 

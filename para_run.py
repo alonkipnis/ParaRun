@@ -8,6 +8,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import argparse
 
+from evaluate_iteration import evaluate_iteration
+
     
 class ParaRun :
 
@@ -29,13 +31,24 @@ class ParaRun :
             return np.linspace(rec['min'], rec['max'],
                          int(rec['length'])).astype(tp)
 
-        xx = gen_series('x') # make sure that 'x' is consifured in params file
-        yy = gen_series('y') # make sure that 'y' is consifured in params file
+        rr = gen_series('r')
+        bb = gen_series('beta')
+        xx = self._params['variables']['Zipf_params']
+        nMonte = self._params['nMonte']
 
-        for itr in range(self._params['nMonte']) :
-            for x in xx :
-                for y in yy :
-                   yield {'itr' : itr, 'x' : x, 'y' : y}  
+        nn = self._params['variables']['n_samples']
+        NN = self._params['variables']['n_features']
+    
+        for itr in range(nMonte) :
+            for N in NN :
+                ee = np.round(N ** (-bb), 6)
+                mm = np.round(np.sqrt(2*np.log(N) * rr), 3)
+                for n in nn :
+                    for eps in ee :
+                        for mu in mm :
+                            for xi in xx :
+                                yield {'itr' : itr, 'n' : n, 'N': N,
+                                       'ep' : eps, 'mu' : mu, 'xi' : xi} 
         
     def run(self, func) :
         """
@@ -47,7 +60,7 @@ class ParaRun :
         """
         logging.info(f" Running...")
         y = self._conf.iloc[:,1:].apply(lambda row : func(*row), axis=1)
-        #print(y)
+        
         #self._out = pd.json_normalize(y)
         self._out = y
         logging.info(f" Completed.")
@@ -81,7 +94,7 @@ class ParaRun :
         logging.info(" Sending futures...")
     
         y = x.compute()
-        print(y)
+        
 
         self._out = pd.DataFrame(y)
         self._out['func'] = str(func.__name__)
@@ -112,13 +125,14 @@ def main() :
     args = parser.parse_args()
     #
     
-    exp = ParaRun(args.p)
-    if args.dask :
-        exp.Dask_run(evaluate_iteration)
-    else :
-        exp.run(evaluate_iteration)
 
-    exp.to_file(args.o)
+    exper = ParaRun(args.p)
+    if args.dask :
+        exper.Dask_run(evaluate_iteration)
+    else :
+        exper.run(evaluate_iteration)
+
+    exper.to_file(args.o)
 
 if __name__ == '__main__':
     main()
